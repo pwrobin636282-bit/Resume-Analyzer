@@ -14,19 +14,18 @@ if not skills_file or not jobs_file:
 skill_df = pd.read_csv(skills_file)
 skill_list = skill_df['Skills'].tolist()
 
+
+
 job_df = pd.read_csv(jobs_file)
 
-resume_folder = 'resumes/'
-results=[]
-for filename in os.listdir(resume_folder):
+def analyze_resume(resume_path):
     
-    if filename.endswith('.pdf'):
-        resume_path = os.path.join(resume_folder, filename)
-
+        results=[]
         resume_text = ""
+
         with pdfplumber.open(resume_path) as pdf:
-            for i in pdf.pages:
-                text = i.extract_text()
+            for page in pdf.pages:
+                text = page.extract_text()
                 if text:
                     resume_text += text
 
@@ -34,9 +33,7 @@ for filename in os.listdir(resume_folder):
         for skill in skill_list:
             if skill.lower() in resume_text.lower():
                 detected_skill.append(skill)
-
-        recommendation = []
-
+        recommendation=[]
         for index, row in job_df.iterrows():
             missing_skills = []
             matched_skills = []
@@ -73,8 +70,9 @@ for filename in os.listdir(resume_folder):
             reverse=True
         )
 
-        print(f"=== Recommendations for {filename} ===")
+        
         for rank, (job, score, percentage, missing, matched) in enumerate(recommendation[:5], start=1):
+            print(f"Rank {rank}")
 
             print("Job Role :", job)
 
@@ -87,35 +85,34 @@ for filename in os.listdir(resume_folder):
             print("Missing Skills :", missing)
 
             print()
+            results.append([
+                os.path.basename(resume_path),
+                rank,
+                job,
+                score,
+                round(percentage,2),
+                ", ".join(matched),
+                ", ".join(missing)
+            ])
+            
+    
 
-            results.append(
-            [
-            filename,
-            rank,
-            job,
-            score,
-            round(percentage,2),
-            ", ".join(matched),
-            ", ".join(missing)
-        ]
-    )
+        result_df = pd.DataFrame(
+            results,
+            columns=[
+            "Resume",
+            "Rank",
+            "Recommended Job",
+            "Match Count",
+            "Match Percentage",
+            "Matched Skills",
+            "Missing Skills"
+        ])
 
-result_df = pd.DataFrame(
-    results,
-    columns=[
-        "Resume",
-        "Rank",
-        "Recommended Job",
-        "Match Count",
-        "Match Percentage",
-        "Matched Skills",
-        "Missing Skills"
-    ]
-)
+        result_df.to_csv(
+            "recommendations.csv",
+            index=False
+        )
 
-result_df.to_csv(
-    "recommendations.csv",
-    index=False
-)
-
-print("Recommendations saved successfully!")
+        print("Recommendations saved successfully!")
+        return result_df
