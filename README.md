@@ -123,11 +123,11 @@ This project helped me gain practical experience in:
 ---
 ## 📸 Screenshot
 
-![Home Page](Screenshot 2026-07-24 223951.png)
+![Home Page](images/homepage.png)
 
-![Home Page](Screenshot 2026-07-24 223958.png)
+![Upload](upload.png)
 
-![Home Page](Screenshot 2026-07-24 224005.png)
+![Result](result.png)
 
 ---
 ## 👨‍💻 Author
