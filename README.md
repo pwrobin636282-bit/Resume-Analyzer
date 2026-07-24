@@ -119,11 +119,6 @@ This project helped me gain practical experience in:
 - Git & GitHub
 - Project Structuring
 
----
-
-## 📸 Screenshots
-
-> *(Add screenshots of your Streamlit application here.)*
 
 ---
 
